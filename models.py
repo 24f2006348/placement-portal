@@ -1,5 +1,6 @@
 import sqlite3          #to read write in .db file using .py
 import os               #interact with os (fetch dir path, filenames etc)
+from werkzeug.security import generate_password_hash
 
 # note:
 # os.path.abspath(__file__) gets the full path of this models.py file
@@ -157,7 +158,7 @@ def init_db():
     if not existing_admin:
         c.execute(
             "INSERT INTO user (email, password, user_type) VALUES (?, ?, ?)",
-            ("admin@portal.com", "admin123", "admin")
+            ("admin@portal.com", generate_password_hash("admin123"), "admin")
         )
 
     conn.commit()

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration — Placement Portal{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <h3 class="card-title text-center mb-4">Student Registration</h3>
+
+                <!-- 
+                -->
+                <form method="POST" action="" enctype="multipart/form-data">
+
+                    <!-- ======= ACCOUNT SECTION ======= -->
+                    <!-- 
+                    -->
+                    <h6 class="text-muted mb-3">Account Information</h6>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address <span class="text-danger">*</span></label>
+                        <!-- 
+                            WHY * on some labels?
+                            Visual indicator that this field is required.
+                            Matches the backend check: 
+                            if not email or not password or not full_name or not roll_no
+                        -->
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+
+                    <div class="row">
+                        <!-- 
+                        -->
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            <!-- 
+                            -->
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h6 class="text-muted mb-3">Profile Information</h6>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="roll_no" class="form-label">Roll Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="roll_no" name="roll_no" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="degree" class="form-label">Degree</label>
+                            <!-- 
+                            -->
+                            <select class="form-select" id="degree" name="degree">
+                                <option value="">-- Select Degree --</option>
+                                <option value="B.Tech">B.Tech</option>
+                                <option value="M.Tech">M.Tech</option>
+                                <option value="MBA">MBA</option>
+                                <option value="MCA">MCA</option>
+                                <option value="BSc">BSc</option>
+                                <option value="MSc">MSc</option>
+                                <option value="PhD">PhD</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" class="form-control" id="department" name="department" placeholder="e.g. Computer Science">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="year" class="form-label">Year of Study <span class="text-danger">*</span></label>
+                            <!-- 
+                            -->
+                            <input type="number" class="form-control" id="year" name="year" min="1" max="5" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="cgpa" class="form-label">CGPA</label>
+                            <!-- 
+                            -->
+                            <input type="number" class="form-control" id="cgpa" name="cgpa" min="0" max="10" step="0.01" placeholder="e.g. 8.5">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="10-digit number">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="skills" class="form-label">Skills</label>
+                        <!-- 
+
+                        -->
+                        <textarea class="form-control" id="skills" name="skills" rows="2" placeholder="e.g. Python, Flask, SQL, Communication"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Register as Student</button>
+
+                </form>
+
+                <div class="text-center mt-3">
+                    <small>Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a></small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

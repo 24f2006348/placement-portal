@@ -3,7 +3,7 @@ from flask_login import LoginManager, UserMixin, current_user
 from werkzeug.security import generate_password_hash
 import os
 from models import init_db, get_db
-
+from user import User
 # note:
 # Flask(__name__) creates the flask app
 # __name__ tells flask where to look for templates/ and static/ folders
@@ -41,23 +41,6 @@ login_manager.login_message_category = "warning"
 # if is_active = 0, flask-login blocks them from logging in
 # self.role stores user_type from DB ('admin','company','student')
 # we use current_user.role throughout the app to check permissions
-
-class User(UserMixin):
-    def __init__(self, id, email, role, is_active):
-        self.id = id
-        self.email = email
-        self.role = role
-        self._active = bool(is_active)
-
-    # note:
-    # @property means we call it like current_user.is_active
-    # not like current_user.is_active()
-    # Flask-Login checks this automatically on every login attempt
-    # if False, the user cannot log in even with correct password
-    @property
-    def is_active(self):
-        return self._active
-
 # note:
 # @login_manager.user_loader decorator connects this function to Flask-Login
 # Flask-Login calls load_user() automatically on EVERY request

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Drives — Admin{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">Manage Placement Drives</h3>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Salary</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in drives %}
+            <tr>
+                <td>{{ d.job_title }}</td>
+                <td>{{ d.company_name }}</td>
+                <td>{{ d.location or '-' }}</td>
+                <td>{{ d.salary or '-' }}</td>
+                <td>{{ d.application_deadline }}</td>
+                <td>
+                    {% if d.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif d.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif d.status == 'rejected' %}
+                        <span class="badge bg-secondary">Rejected</span>
+                    {% elif d.status == 'closed' %}
+                        <span class="badge bg-dark">Closed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if d.status == 'pending' %}
+                        <form method="POST"
+                              action="{{ url_for('admin.drive_action', drive_id=d.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form method="POST"
+                              action="{{ url_for('admin.drive_action', drive_id=d.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="reject">
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No drives found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

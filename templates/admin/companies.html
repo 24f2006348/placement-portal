@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Companies — Admin{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">Manage Companies</h3>
+
+<!-- search -->
+<form method="GET" action="" class="d-flex mb-4 gap-2">
+    <input type="text" class="form-control" name="search"
+           placeholder="Search by company name..." value="{{ search }}">
+    <button class="btn btn-primary">Search</button>
+    {% if search %}
+        <a href="{{ url_for('admin.companies') }}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Company</th>
+                <th>HR Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Account</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in companies %}
+            <tr>
+                <td>{{ c.company_name }}</td>
+                <td>{{ c.hr_name }}</td>
+                <td>{{ c.email }}</td>
+                <td>
+                    {% if c.approval_status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif c.approval_status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif c.approval_status == 'rejected' %}
+                        <span class="badge bg-secondary">Rejected</span>
+                    {% elif c.approval_status == 'blacklisted' %}
+                        <span class="badge bg-danger">Blacklisted</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if c.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if c.approval_status == 'pending' %}
+                        <form method="POST"
+                              action="{{ url_for('admin.company_action', company_id=c.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form method="POST"
+                              action="{{ url_for('admin.company_action', company_id=c.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="reject">
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    {% elif c.approval_status != 'blacklisted' %}
+                        <form method="POST"
+                              action="{{ url_for('admin.company_action', company_id=c.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="blacklist">
+                            <input type="hidden" name="reason" value="Blacklisted by admin">
+                            <button class="btn btn-dark btn-sm"
+                                    onclick="return confirm('Blacklist this company?')">
+                                Blacklist
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST"
+                              action="{{ url_for('admin.company_action', company_id=c.id) }}"
+                              class="d-inline">
+                            <input type="hidden" name="action" value="reactivate">
+                            <button class="btn btn-outline-success btn-sm">Reactivate</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted">No companies found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

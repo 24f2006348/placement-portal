@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ total_students }}</h3>
+                <p class="mb-0">Students</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ total_companies }}</h3>
+                <p class="mb-0">Companies</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ total_drives }}</h3>
+                <p class="mb-0">Drives</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3>{{ total_applications }}</h3>
+                <p class="mb-0">Applications</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-4">
+    <a href="{{ url_for('admin.companies') }}" class="btn btn-primary me-2 mb-2">Companies</a>
+    <a href="{{ url_for('admin.students') }}" class="btn btn-primary me-2 mb-2">Students</a>
+    <a href="{{ url_for('admin.drives') }}" class="btn btn-primary me-2 mb-2">Drives</a>
+    <a href="{{ url_for('admin.applications') }}" class="btn btn-primary mb-2">Applications</a>
+</div>
+
+<h4>Pending Companies</h4>
+{% if pending_companies %}
+<table class="table table-bordered">
+    <tr>
+        <th>Company</th>
+        <th>HR</th>
+        <th>Action</th>
+    </tr>
+    {% for c in pending_companies %}
+    <tr>
+        <td>{{ c.company_name }}</td>
+        <td>{{ c.hr_name }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('admin.company_action', company_id=c.id) }}" class="d-inline">
+                <input type="hidden" name="action" value="approve">
+                <button class="btn btn-success btn-sm">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.company_action', company_id=c.id) }}" class="d-inline">
+                <input type="hidden" name="action" value="reject">
+                <button class="btn btn-danger btn-sm">Reject</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="text-success">No pending companies.</p>
+{% endif %}
+
+<h4 class="mt-4">Pending Drives</h4>
+{% if pending_drives %}
+<table class="table table-bordered">
+    <tr>
+        <th>Job Title</th>
+        <th>Company</th>
+        <th>Action</th>
+    </tr>
+    {% for d in pending_drives %}
+    <tr>
+        <td>{{ d.job_title }}</td>
+        <td>{{ d.company_name }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('admin.drive_action', drive_id=d.id) }}" class="d-inline">
+                <input type="hidden" name="action" value="approve">
+                <button class="btn btn-success btn-sm">Approve</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.drive_action', drive_id=d.id) }}" class="d-inline">
+                <input type="hidden" name="action" value="reject">
+                <button class="btn btn-danger btn-sm">Reject</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p class="text-success">No pending drives.</p>
+{% endif %}
+
+{% endblock %}

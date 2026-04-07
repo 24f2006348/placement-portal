@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Applications — Admin{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">All Applications</h3>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Student</th>
+                <th>Roll No</th>
+                <th>Department</th>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Applied On</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in applications %}
+            <tr>
+                <td>{{ a.full_name }}</td>
+                <td>{{ a.roll_no }}</td>
+                <td>{{ a.department or '-' }}</td>
+                <td>{{ a.job_title }}</td>
+                <td>{{ a.company_name }}</td>
+                <td>{{ a.applied_at[:10] }}</td>
+                <td>
+                    {% if a.status == 'applied' %}
+                        <span class="badge bg-primary">Applied</span>
+                    {% elif a.status == 'shortlisted' %}
+                        <span class="badge bg-warning text-dark">Shortlisted</span>
+                    {% elif a.status == 'selected' %}
+                        <span class="badge bg-success">Selected</span>
+                    {% elif a.status == 'rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center text-muted">No applications yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

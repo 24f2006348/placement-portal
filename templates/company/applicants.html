@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Applicants — {{ drive.job_title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>{{ drive.job_title }}</h3>
+        <p class="text-muted mb-0">{{ company.company_name }} · {{ drive.location or 'Location not specified' }}</p>
+    </div>
+    <a href="{{ url_for('company.company_dashboard') }}" class="btn btn-outline-secondary">
+        ← Back
+    </a>
+</div>
+
+{% if applicants %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Roll No</th>
+                <th>Department</th>
+                <th>CGPA</th>
+                <th>Skills</th>
+                <th>Resume</th>
+                <th>Status</th>
+                <th>Update</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in applicants %}
+            <tr>
+                <td>{{ a.full_name }}</td>
+                <td>{{ a.roll_no or '-' }}</td>
+                <td>{{ a.department or '-' }}</td>
+                <td>{{ a.cgpa or '-' }}</td>
+                <td>{{ a.skills or '-' }}</td>
+                <td>
+                    {% if a.resume_path %}
+                        <a href="/static/uploads/{{ a.resume_path }}"
+                           target="_blank" class="btn btn-outline-info btn-sm">
+                            View
+                        </a>
+                    {% else %}
+                        <span class="text-muted">None</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if a.status == 'applied' %}
+                        <span class="badge bg-primary">Applied</span>
+                    {% elif a.status == 'shortlisted' %}
+                        <span class="badge bg-warning text-dark">Shortlisted</span>
+                    {% elif a.status == 'selected' %}
+                        <span class="badge bg-success">Selected</span>
+                    {% elif a.status == 'rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('company.update_application',
+                                   application_id=a.application_id) }}"
+                          class="d-flex gap-1">
+                        <input type="hidden" name="drive_id" value="{{ drive.id }}">
+                        <select name="status" class="form-select form-select-sm"
+                                style="width: auto;">
+                            <option value="applied"
+                                {% if a.status == 'applied' %}selected{% endif %}>
+                                Applied
+                            </option>
+                            <option value="shortlisted"
+                                {% if a.status == 'shortlisted' %}selected{% endif %}>
+                                Shortlisted
+                            </option>
+                            <option value="selected"
+                                {% if a.status == 'selected' %}selected{% endif %}>
+                                Selected
+                            </option>
+                            <option value="rejected"
+                                {% if a.status == 'rejected' %}selected{% endif %}>
+                                Rejected
+                            </option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Save
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">No applications received yet for this drive.</div>
+{% endif %}
+{% endblock %}

@@ -162,6 +162,37 @@ def close_drive(drive_id):
     flash("Drive closed successfully.", "success")
     return redirect(url_for("company.company_dashboard"))
 
+# note:
+# reopen a closed drive
+# sets status back to 'pending' so admin has to re-approve it
+# this is intentional — admin should know the drive is being reopened
+
+@company_bp.route("/drives/<int:drive_id>/reopen", methods=["POST"])
+@login_required
+@company_required
+def reopen_drive(drive_id):
+    company = get_company()
+    conn = get_db()
+
+    drive = conn.execute(
+        "SELECT * FROM placement_drive WHERE id = ? AND company_id = ?",
+        (drive_id, company["id"])
+    ).fetchone()
+
+    if not drive or drive["status"] != "closed":
+        conn.close()
+        flash("Only closed drives can be reopened.", "warning")
+        return redirect(url_for("company.company_dashboard"))
+
+    conn.execute(
+        "UPDATE placement_drive SET status = 'pending' WHERE id = ? AND company_id = ?",
+        (drive_id, company["id"])
+    )
+    conn.commit()
+    conn.close()
+
+    flash("Drive resubmitted for admin approval.", "success")
+    return redirect(url_for("company.company_dashboard"))
 
 @company_bp.route("/drives/<int:drive_id>/applicants")
 @login_required

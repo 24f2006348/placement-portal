@@ -53,20 +53,30 @@
                         </a>
                     </td>
                     <td>
-                        {% if d.status != 'approved' %}
-                            <a href="{{ url_for('company.edit_drive', drive_id=d.id) }}"
-                               class="btn btn-outline-secondary btn-sm">Edit</a>
-                        {% endif %}
-                        {% if d.status == 'approved' %}
-                            <form method="POST"
-                                  action="{{ url_for('company.close_drive', drive_id=d.id) }}"
-                                  class="d-inline">
-                                <button class="btn btn-outline-danger btn-sm"
-                                        onclick="return confirm('Close this drive?')">
-                                    Close
-                                </button>
-                            </form>
-                        {% endif %}
+                        {% if d.status == 'pending' or d.status == 'rejected' %}
+                        <a href="{{ url_for('company.edit_drive', drive_id=d.id) }}"
+                           class="btn btn-outline-secondary btn-sm">Edit</a>
+                    {% endif %}
+                    {% if d.status == 'approved' %}
+                        <form method="POST"
+                              action="{{ url_for('company.close_drive', drive_id=d.id) }}"
+                              class="d-inline">
+                            <button class="btn btn-outline-danger btn-sm"
+                                    onclick="return confirm('Close this drive?')">
+                                Close
+                            </button>
+                        </form>
+                    {% endif %}
+                    {% if d.status == 'closed' %}
+                        <form method="POST"
+                              action="{{ url_for('company.reopen_drive', drive_id=d.id) }}"
+                              class="d-inline">
+                            <button class="btn btn-outline-success btn-sm"
+                                    onclick="return confirm('Reopen this drive? It will go back to admin for approval.')">
+                                Reopen
+                            </button>
+                        </form>
+                    {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

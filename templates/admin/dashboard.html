@@ -62,6 +62,8 @@
         <td>{{ c.company_name }}</td>
         <td>{{ c.hr_name }}</td>
         <td>
+            <a href="{{ url_for('admin.company_detail', company_id=c.id) }}"
+               class="btn btn-outline-info btn-sm">View</a>
             <form method="POST" action="{{ url_for('admin.company_action', company_id=c.id) }}" class="d-inline">
                 <input type="hidden" name="action" value="approve">
                 <button class="btn btn-success btn-sm">Approve</button>
@@ -91,11 +93,17 @@
         <td>{{ d.job_title }}</td>
         <td>{{ d.company_name }}</td>
         <td>
-            <form method="POST" action="{{ url_for('admin.drive_action', drive_id=d.id) }}" class="d-inline">
+            <a href="{{ url_for('admin.drive_detail', drive_id=d.id) }}"
+               class="btn btn-outline-info btn-sm">View</a>
+            <form method="POST"
+                  action="{{ url_for('admin.drive_action', drive_id=d.id) }}"
+                  class="d-inline">
                 <input type="hidden" name="action" value="approve">
                 <button class="btn btn-success btn-sm">Approve</button>
             </form>
-            <form method="POST" action="{{ url_for('admin.drive_action', drive_id=d.id) }}" class="d-inline">
+            <form method="POST"
+                  action="{{ url_for('admin.drive_action', drive_id=d.id) }}"
+                  class="d-inline">
                 <input type="hidden" name="action" value="reject">
                 <button class="btn btn-danger btn-sm">Reject</button>
             </form>

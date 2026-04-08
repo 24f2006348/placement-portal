@@ -51,6 +51,8 @@
                     {% endif %}
                 </td>
                 <td>
+                    <a href="{{ url_for('admin.company_detail', company_id=c.id) }}"
+                       class="btn btn-outline-info btn-sm mb-1">View</a>
                     {% if c.approval_status == 'pending' %}
                         <form method="POST"
                               action="{{ url_for('admin.company_action', company_id=c.id) }}"

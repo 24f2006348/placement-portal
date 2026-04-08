@@ -37,6 +37,8 @@
                     {% endif %}
                 </td>
                 <td>
+                    <a href="{{ url_for('admin.drive_detail', drive_id=d.id) }}"
+                       class="btn btn-outline-info btn-sm">View</a>
                     {% if d.status == 'pending' %}
                         <form method="POST"
                               action="{{ url_for('admin.drive_action', drive_id=d.id) }}"
@@ -50,8 +52,6 @@
                             <input type="hidden" name="action" value="reject">
                             <button class="btn btn-danger btn-sm">Reject</button>
                         </form>
-                    {% else %}
-                        <span class="text-muted">—</span>
                     {% endif %}
                 </td>
             </tr>

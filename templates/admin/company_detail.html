@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Company Details — Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Company Details</h3>
+    <a href="{{ url_for('admin.companies') }}" class="btn btn-outline-secondary">← Back</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header fw-bold d-flex justify-content-between">
+        <span>{{ company.company_name }}</span>
+        {% if company.approval_status == 'approved' %}
+            <span class="badge bg-success">Approved</span>
+        {% elif company.approval_status == 'pending' %}
+            <span class="badge bg-warning text-dark">Pending</span>
+        {% elif company.approval_status == 'rejected' %}
+            <span class="badge bg-secondary">Rejected</span>
+        {% elif company.approval_status == 'blacklisted' %}
+            <span class="badge bg-danger">Blacklisted</span>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>HR Name:</strong> {{ company.hr_name }}</p>
+                <p><strong>HR Email:</strong> {{ company.hr_email }}</p>
+                <p><strong>HR Phone:</strong> {{ company.hr_phone or 'Not provided' }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Login Email:</strong> {{ company.email }}</p>
+                <p>
+                    <strong>Website:</strong>
+                    {% if company.website %}
+                        <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
+                    {% else %}
+                        Not provided
+                    {% endif %}
+                </p>
+                <p><strong>Registered On:</strong> {{ company.created_at[:10] }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- drives posted by this company -->
+<h5 class="mb-3">Drives Posted</h5>
+{% if drives %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Job Title</th>
+                <th>Location</th>
+                <th>Salary</th>
+                <th>Deadline</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in drives %}
+            <tr>
+                <td>{{ d.job_title }}</td>
+                <td>{{ d.location or '-' }}</td>
+                <td>{{ d.salary or '-' }}</td>
+                <td>{{ d.application_deadline }}</td>
+                <td>
+                    {% if d.status == 'approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif d.status == 'pending' %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% elif d.status == 'rejected' %}
+                        <span class="badge bg-secondary">Rejected</span>
+                    {% elif d.status == 'closed' %}
+                        <span class="badge bg-dark">Closed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">No drives posted by this company yet.</div>
+{% endif %}
+
+<!-- action buttons -->
+{% if company.approval_status == 'pending' %}
+<div class="d-flex gap-2 mt-4">
+    <form method="POST"
+          action="{{ url_for('admin.company_action', company_id=company.id) }}">
+        <input type="hidden" name="action" value="approve">
+        <button class="btn btn-success">✅ Approve Company</button>
+    </form>
+    <form method="POST"
+          action="{{ url_for('admin.company_action', company_id=company.id) }}">
+        <input type="hidden" name="action" value="reject">
+        <button class="btn btn-danger">❌ Reject Company</button>
+    </form>
+</div>
+{% elif company.approval_status == 'approved' %}
+<div class="mt-4">
+    <form method="POST"
+          action="{{ url_for('admin.company_action', company_id=company.id) }}">
+        <input type="hidden" name="action" value="blacklist">
+        <input type="hidden" name="reason" value="Blacklisted by admin">
+        <button class="btn btn-dark"
+                onclick="return confirm('Blacklist this company?')">
+            🚫 Blacklist Company
+        </button>
+    </form>
+</div>
+{% elif company.approval_status == 'blacklisted' %}
+<div class="mt-4">
+    <form method="POST"
+          action="{{ url_for('admin.company_action', company_id=company.id) }}">
+        <input type="hidden" name="action" value="reactivate">
+        <button class="btn btn-outline-success">♻️ Reactivate Company</button>
+    </form>
+</div>
+{% endif %}
+
+{% endblock %}

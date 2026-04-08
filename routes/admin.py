@@ -322,3 +322,66 @@ def applications():
     ).fetchall()
     conn.close()
     return render_template("admin/applications.html", applications=rows)
+
+# note:
+# admin view single company detail
+# shows company info + all their drives + action buttons
+
+@admin_bp.route("/companies/<int:company_id>")
+@login_required
+@admin_required
+def company_detail(company_id):
+    conn = get_db()
+
+    company = conn.execute(
+        """SELECT c.*, u.email
+           FROM company c
+           JOIN user u ON c.user_id = u.id
+           WHERE c.id = ?""",
+        (company_id,)
+    ).fetchone()
+
+    if not company:
+        conn.close()
+        flash("Company not found.", "danger")
+        return redirect(url_for("admin.companies"))
+
+    drives = conn.execute(
+        """SELECT * FROM placement_drive
+           WHERE company_id = ?
+           ORDER BY created_at DESC""",
+        (company_id,)
+    ).fetchall()
+
+    conn.close()
+    return render_template("admin/company_detail.html",
+        company=company,
+        drives=drives
+    )
+
+
+# note:
+# admin view single drive detail
+# shows full drive info + approve/reject buttons if pending
+
+@admin_bp.route("/drives/<int:drive_id>/detail")
+@login_required
+@admin_required
+def drive_detail(drive_id):
+    conn = get_db()
+
+    drive = conn.execute(
+        """SELECT pd.*, c.company_name
+           FROM placement_drive pd
+           JOIN company c ON pd.company_id = c.id
+           WHERE pd.id = ?""",
+        (drive_id,)
+    ).fetchone()
+
+    if not drive:
+        conn.close()
+        flash("Drive not found.", "danger")
+        return redirect(url_for("admin.drives"))
+
+    conn.close()
+    return render_template("admin/drive_detail.html", drive=drive)

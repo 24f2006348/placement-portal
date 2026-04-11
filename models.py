@@ -2,12 +2,7 @@ import sqlite3          #to read write in .db file using .py
 import os               #interact with os (fetch dir path, filenames etc)
 from werkzeug.security import generate_password_hash
 
-# note:
-# os.path.abspath(__file__) gets the full path of this models.py file
-# os.path.dirname() gets the folder it lives in
-# os.path.join() connects that folder path with the db filename
-# This way placement.db is always created in the same folder as models.py
-# no matter where you run the script from
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  #path_of_dir_of_self/models.py[path_of_dironly(full_path_of(self))]  so even if we change the location of models.py, it will retrive that location
 DB_PATH = os.path.join(BASE_DIR, "placement.db") #attaches placement.db with models.py ka folder no matter if the folder location is changed

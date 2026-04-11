@@ -23,10 +23,7 @@ def admin_required(f):
     return decorated
 
 
-# note:
-# admin dashboard shows aggregate counts
-# and lists pending company approvals prominently
-# so admin knows what needs attention immediately
+
 
 @admin_bp.route("/dashboard")
 @login_required
@@ -58,7 +55,7 @@ def admin_dashboard():
            ORDER BY c.created_at DESC"""
     ).fetchall()
 
-    # pending drive approvals
+    
     pending_drives = conn.execute(
         """SELECT pd.id, pd.job_title, pd.location, pd.salary,
                   pd.application_deadline, c.company_name
@@ -80,9 +77,7 @@ def admin_dashboard():
     )
 
 
-# note:
-# view all companies with their approval status
-# search by company name if query param provided
+
 
 @admin_bp.route("/companies")
 @login_required
@@ -112,10 +107,7 @@ def companies():
     return render_template("admin/companies.html", companies=rows, search=search)
 
 
-# note:
-# approve or reject a company registration
-# action comes from the form as a hidden field: 'approve' or 'reject'
-# if blacklisted, we also set is_active=0 in user table
+
 
 @admin_bp.route("/companies/<int:company_id>/action", methods=["POST"])
 @login_required
@@ -140,7 +132,7 @@ def company_action(company_id):
 
     elif action == "blacklist":
         reason = request.form.get("reason", "No reason provided")
-        # get user_id for this company
+        
         company = conn.execute(
             "SELECT user_id FROM company WHERE id = ?", (company_id,)
         ).fetchone()
@@ -181,8 +173,7 @@ def company_action(company_id):
     return redirect(url_for("admin.companies"))
 
 
-# note:
-# view all students with search by name, roll_no, or email
+
 
 @admin_bp.route("/students")
 @login_required
@@ -214,9 +205,7 @@ def students():
     return render_template("admin/students.html", students=rows, search=search)
 
 
-# note:
-# blacklist or reactivate a student
-# same pattern as company action
+
 
 @admin_bp.route("/students/<int:student_id>/action", methods=["POST"])
 @login_required
@@ -254,9 +243,7 @@ def student_action(student_id):
     return redirect(url_for("admin.students"))
 
 
-# note:
-# view all placement drives with their status
-# admin can approve or reject drives here
+
 
 @admin_bp.route("/drives")
 @login_required
@@ -273,8 +260,7 @@ def drives():
     return render_template("admin/drives.html", drives=rows)
 
 
-# note:
-# approve or reject a placement drive
+
 
 @admin_bp.route("/drives/<int:drive_id>/action", methods=["POST"])
 @login_required
@@ -302,9 +288,7 @@ def drive_action(drive_id):
     return redirect(url_for("admin.drives"))
 
 
-# note:
-# view all applications across all drives
-# admin can see the full picture of all placements
+
 
 @admin_bp.route("/applications")
 @login_required
@@ -323,9 +307,7 @@ def applications():
     conn.close()
     return render_template("admin/applications.html", applications=rows)
 
-# note:
-# admin view single company detail
-# shows company info + all their drives + action buttons
+
 
 @admin_bp.route("/companies/<int:company_id>")
 @login_required
@@ -360,9 +342,7 @@ def company_detail(company_id):
     )
 
 
-# note:
-# admin view single drive detail
-# shows full drive info + approve/reject buttons if pending
+
 
 @admin_bp.route("/drives/<int:drive_id>/detail")
 @login_required

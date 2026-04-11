@@ -41,7 +41,7 @@ def company_dashboard():
     company = get_company()
     conn = get_db()
 
-    # get all drives posted by this company
+    
     drives = conn.execute(
         """SELECT pd.*,
            (SELECT COUNT(*) FROM application a WHERE a.drive_id = pd.id) as applicant_count
@@ -162,10 +162,7 @@ def close_drive(drive_id):
     flash("Drive closed successfully.", "success")
     return redirect(url_for("company.company_dashboard"))
 
-# note:
-# reopen a closed drive
-# sets status back to 'pending' so admin has to re-approve it
-# this is intentional — admin should know the drive is being reopened
+
 
 @company_bp.route("/drives/<int:drive_id>/reopen", methods=["POST"])
 @login_required

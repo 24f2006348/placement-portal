@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ drive.job_title }} — {{ drive.company_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h3 class="mb-1">{{ drive.job_title }}</h3>
+                        <h5 class="text-muted">
+                            <a href="{{ url_for('student.company_detail', company_id=drive.company_id) }}"
+                               class="text-decoration-none">
+                                {{ drive.company_name }}
+                            </a>
+                        </h5>
+                    </div>
+                    <a href="{{ url_for('student.student_dashboard') }}"
+                       class="btn btn-outline-secondary btn-sm">← Back</a>
+                </div>
+
+                <hr>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <p class="mb-1 text-muted small">Location</p>
+                        <p class="fw-bold">{{ drive.location or 'Not specified' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1 text-muted small">Salary / CTC</p>
+                        <p class="fw-bold">{{ drive.salary or 'Not disclosed' }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="mb-1 text-muted small">Application Deadline</p>
+                        <p class="fw-bold">{{ drive.application_deadline }}</p>
+                    </div>
+                </div>
+
+                {% if drive.eligibility_criteria %}
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Eligibility Criteria</p>
+                    <p>{{ drive.eligibility_criteria }}</p>
+                </div>
+                {% endif %}
+
+                {% if drive.job_description %}
+                <div class="mb-3">
+                    <p class="mb-1 text-muted small">Job Description</p>
+                    <p>{{ drive.job_description }}</p>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                {% if already_applied %}
+                    <div class="alert alert-success mb-0">
+                        ✅ You have already applied to this drive.
+                    </div>
+                {% else %}
+                    <form method="POST"
+                          action="{{ url_for('student.apply', drive_id=drive.id) }}">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg"
+                                    onclick="return confirm('Apply to this drive?')">
+                                Apply Now
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

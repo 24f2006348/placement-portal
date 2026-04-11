@@ -243,7 +243,22 @@ def update_application(application_id):
         flash("Invalid status.", "danger")
         return redirect(url_for("company.company_dashboard"))
 
+    company = get_company()
     conn = get_db()
+
+    # verify this application belongs to a drive owned by current company
+    valid = conn.execute(
+        """SELECT a.id FROM application a
+           JOIN placement_drive pd ON a.drive_id = pd.id
+           WHERE a.id = ? AND pd.company_id = ?""",
+        (application_id, company["id"])
+    ).fetchone()
+
+    if not valid:
+        conn.close()
+        flash("Unauthorized action.", "danger")
+        return redirect(url_for("company.company_dashboard"))
+
     conn.execute(
         "UPDATE application SET status = ?, remarks = ? WHERE id = ?",
         (status, remarks, application_id)

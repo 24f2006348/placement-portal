@@ -1,8 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from models import get_db
 from user import User
+import os
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "uploads")
+ALLOWED_EXTENSIONS = {"pdf", "doc", "docx"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -54,7 +62,13 @@ def login():
 
             if not company or company["approval_status"] != "approved":
                 conn.close()
-                flash("Your company registration is pending admin approval.", "warning")
+                status = company["approval_status"] if company else "pending"
+                if status == "rejected":
+                    flash("Your company registration has been rejected by admin.", "danger")
+                elif status == "blacklisted":
+                    flash("Your company has been blacklisted. Contact admin.", "danger")
+                else:
+                    flash("Your company registration is pending admin approval.", "warning")
                 return redirect(url_for("auth.login"))
 
         conn.close()
@@ -127,6 +141,18 @@ def register_student():
             flash("Email already registered. Please log in.", "danger")
             return redirect(url_for("auth.register_student"))
 
+        # handle optional resume upload at registration
+        resume_path = None
+        file = request.files.get("resume")
+        if file and file.filename:
+            if not allowed_file(file.filename):
+                flash("Only PDF, DOC, DOCX files allowed for resume.", "danger")
+                return redirect(url_for("auth.register_student"))
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            filename = secure_filename(f"resume_{email}_{file.filename}")
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            resume_path = filename
+
         conn.execute(
             "INSERT INTO user (email, password, user_type) VALUES (?, ?, ?)",
             (email, generate_password_hash(password), "student")
@@ -142,10 +168,10 @@ def register_student():
         conn.execute(
             """
             INSERT INTO student
-            (user_id, full_name, roll_no, degree, department, year, cgpa, phone, skills)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (user_id, full_name, roll_no, degree, department, year, cgpa, phone, skills, resume_path)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (user_id, full_name, roll_no, degree, department, year, cgpa_value, phone, skills)
+            (user_id, full_name, roll_no, degree, department, year, cgpa_value, phone, skills, resume_path)
         )
         conn.commit()
         conn.close()

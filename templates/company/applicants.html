@@ -58,33 +58,38 @@
                 </td>
                 <td>
                     <form method="POST"
-                          action="{{ url_for('company.update_application',
-                                   application_id=a.application_id) }}"
-                          class="d-flex gap-1">
-                        <input type="hidden" name="drive_id" value="{{ drive.id }}">
-                        <select name="status" class="form-select form-select-sm"
-                                style="width: auto;">
-                            <option value="applied"
-                                {% if a.status == 'applied' %}selected{% endif %}>
-                                Applied
-                            </option>
-                            <option value="shortlisted"
-                                {% if a.status == 'shortlisted' %}selected{% endif %}>
-                                Shortlisted
-                            </option>
-                            <option value="selected"
-                                {% if a.status == 'selected' %}selected{% endif %}>
-                                Selected
-                            </option>
-                            <option value="rejected"
-                                {% if a.status == 'rejected' %}selected{% endif %}>
-                                Rejected
-                            </option>
-                        </select>
-                        <button type="submit" class="btn btn-sm btn-primary">
-                            Save
-                        </button>
-                    </form>
+                    action="{{ url_for('company.update_application',
+                             application_id=a.application_id) }}"
+                    class="d-flex gap-1">
+                  <input type="hidden" name="drive_id" value="{{ drive.id }}">
+                  <select name="status" class="form-select form-select-sm"
+                          style="width: auto;">
+                      <option value="applied"
+                          {% if a.status == 'applied' %}selected{% endif %}>
+                          Applied
+                      </option>
+                      <option value="shortlisted"
+                          {% if a.status == 'shortlisted' %}selected{% endif %}>
+                          Shortlisted
+                      </option>
+                      <option value="selected"
+                          {% if a.status == 'selected' %}selected{% endif %}>
+                          Selected
+                      </option>
+                      <option value="rejected"
+                          {% if a.status == 'rejected' %}selected{% endif %}>
+                          Rejected
+                      </option>
+                  </select>
+                  <input type="text" name="remarks"
+                         class="form-control form-control-sm"
+                         placeholder="Remarks (optional)"
+                         value="{{ a.remarks or '' }}"
+                         style="width: 160px;">
+                  <button type="submit" class="btn btn-sm btn-primary">
+                      Save
+                  </button>
+              </form>
                 </td>
             </tr>
             {% endfor %}

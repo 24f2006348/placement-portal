@@ -7,7 +7,7 @@ from user import User
 
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = "placement_portal_fixed_key_2025"
 
 
 
